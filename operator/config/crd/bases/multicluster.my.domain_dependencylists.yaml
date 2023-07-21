@@ -34,10 +34,24 @@ spec:
           spec:
             description: DependencyListSpec defines the desired state of DependencyList
             properties:
-              foo:
-                description: Foo is an example field of DependencyList. Edit dependencylist_types.go
-                  to remove/update
+              clusterName:
                 type: string
+              clusterServiceMap:
+                additionalProperties:
+                  items:
+                    type: string
+                  type: array
+                type: object
+              dependencies:
+                description: Dependencies is a list of dependencies
+                items:
+                  properties:
+                    dependent:
+                      type: string
+                    dependsOn:
+                      type: string
+                  type: object
+                type: array
             type: object
           status:
             description: DependencyListStatus defines the observed state of DependencyList

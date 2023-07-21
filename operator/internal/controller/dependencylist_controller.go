@@ -19,12 +19,19 @@ package controller
 import (
 	"context"
 
+	"github.com/submariner-io/admiral/pkg/reporter"
+	subctlclient "github.com/submariner-io/subctl/pkg/client"
+	subctlservice "github.com/submariner-io/subctl/pkg/service"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	multiclusterv1beta1 "sha.ejaz/api/v1beta1"
+	"sigs.k8s.io/mcs-api/pkg/apis/v1alpha1"
 )
 
 // DependencyListReconciler reconciles a DependencyList object
@@ -47,11 +54,70 @@ type DependencyListReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.15.0/pkg/reconcile
 func (r *DependencyListReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	log.Info("dependency list reconcile")
+
+	dependencyList := multiclusterv1beta1.DependencyList{}
+
+	if err := r.Client.Get(context.Background(), req.NamespacedName, &dependencyList); err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			log.Error(err, "unable to get dependency list")
+			return ctrl.Result{}, err
+		}
+	}
+
+	log.Info("dependency list", "dependencyList", dependencyList)
+
+	clusterName := dependencyList.Spec.ClusterName
+
+	clusterMap := dependencyList.Spec.ClusterServiceMap
+	serviceList := clusterMap[clusterName]
+
+	dependencies := dependencyList.Spec.Dependencies
+	servicesForExport := []string{}
+	servicesLookup := map[string]bool{}
+
+	for _, dependency := range dependencies {
+		dependsOn := dependency.DependsOn
+		for _, service := range serviceList {
+			if service == dependsOn && !servicesLookup[service] {
+				servicesForExport = append(servicesForExport, service)
+				servicesLookup[service] = true
+			}
+		}
+	}
+
+	err := exportServices(servicesForExport, req.NamespacedName.Namespace)
+	if err != nil {
+		log.Error(err, "unable to export")
+		return ctrl.Result{}, err
+	}
 
 	return ctrl.Result{}, nil
+}
+
+func exportServices(services []string, namespace string) error {
+	config, err := config.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	producer, err := subctlclient.NewProducerFromRestConfig(config)
+	if err != nil {
+		return err
+	}
+
+	scheme.Scheme.AddKnownTypes(v1alpha1.SchemeGroupVersion, &v1alpha1.ServiceExport{})
+
+	for _, service := range services {
+		err = subctlservice.Export(producer, namespace, service, reporter.Klog())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

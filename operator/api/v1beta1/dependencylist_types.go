@@ -23,13 +23,23 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type Dependency struct {
+	Dependent string `json:"dependent,omitempty"`
+	DependsOn string `json:"dependsOn,omitempty"`
+}
+
 // DependencyListSpec defines the desired state of DependencyList
 type DependencyListSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of DependencyList. Edit dependencylist_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Foo string `json:"foo,omitempty"`
+
+	// Dependencies is a list of dependencies
+	Dependencies      []Dependency        `json:"dependencies,omitempty"`
+	ClusterServiceMap map[string][]string `json:"clusterServiceMap,omitempty"`
+	ClusterName       string              `json:"clusterName,omitempty"`
 }
 
 // DependencyListStatus defines the observed state of DependencyList

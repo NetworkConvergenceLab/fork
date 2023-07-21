@@ -9,4 +9,18 @@ metadata:
     app.kubernetes.io/created-by: operator
   name: dependencylist-sample
 spec:
-  # TODO(user): Add fields here
+  clusterName: cluster2
+  clusterServiceMap:
+    cluster1:
+      - productpage
+    cluster2:
+      - details
+      - ratings
+      - reviews
+  dependencies:
+  - dependent: productpage
+    dependsOn: details
+  - dependent: productpage
+    dependsOn: ratings
+  - dependent: productpage
+    dependsOn: reviews
