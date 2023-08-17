@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/created-by: operator
   name: dependencylist-sample
 spec:
-  clusterName: cluster1
+  clusterName: cluster2
   clusterServiceMap:
     cluster1:
       - productpage
