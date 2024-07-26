@@ -33,6 +33,7 @@ import (
 
 	multiclusterv1beta1 "sha.ejaz/api/v1beta1"
 	"sha.ejaz/internal/controller"
+	mcsv1alpha1 "sigs.k8s.io/mcs-api/pkg/apis/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -45,6 +46,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(multiclusterv1beta1.AddToScheme(scheme))
+	utilruntime.Must(mcsv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
