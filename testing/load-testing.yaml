@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fibonacci-py
+  labels:
+    app: fibonacci-py
+    service: fibonacci-py
+spec:
+  ports:
+  - port: 8000
+    name: http
+  selector:
+    app: fibonacci-py
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fibonacci-py
+  labels:
+    account: fibonacci-py
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibonacci-py
+  labels:
+    app: fibonacci-py
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fibonacci-py
+  template:
+    metadata:
+      labels:
+        app: fibonacci-py
+    spec:
+      serviceAccountName: fibonacci-py
+      containers:
+      - name: fibonacci-py
+        image: fibonacci-py:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fibonacci-js
+  labels:
+    app: fibonacci-js
+    service: fibonacci-js
+spec:
+  ports:
+  - port: 8000
+    name: http
+  selector:
+    app: fibonacci-js
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fibonacci-js
+  labels:
+    account: fibonacci-js
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibonacci-js
+  labels:
+    app: fibonacci-js
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fibonacci-js
+  template:
+    metadata:
+      labels:
+        app: fibonacci-js
+    spec:
+      serviceAccountName: fibonacci-js
+      containers:
+      - name: fibonacci-js
+        image: fibonacci-js:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fibonacci-go
+  labels:
+    app: fibonacci-go
+    service: fibonacci-go
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: fibonacci-go
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fibonacci-go
+  labels:
+    account: fibonacci-go
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibonacci-go
+  labels:
+    app: fibonacci-go
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fibonacci-go
+  template:
+    metadata:
+      labels:
+        app: fibonacci-go
+    spec:
+      serviceAccountName: fibonacci-go
+      containers:
+      - name: fibonacci-go
+        image: fibonacci-go:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000

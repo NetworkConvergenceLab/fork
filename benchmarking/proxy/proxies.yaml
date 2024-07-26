@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-proxy
+  labels:
+    app: static-proxy
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    protocol: TCP
+    name: static-proxy
+    targetPort: 8000
+    nodePort: 31554
+  selector:
+    app: static-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-proxy
+  labels:
+    app: static-proxy
+spec:
+  selector:
+    matchLabels:
+      app: static-proxy
+  template:
+    metadata:
+      labels:
+        app: static-proxy
+    spec:
+      containers:
+      - name: static-proxy
+        image: my-proxy:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+          - name: FIBONACCI_HOSTNAME
+            value: "static-service.default.svc.clusterset.local"
+          - name: FIBONACCI_PORT
+            value: "8000"
+          - name: PORT
+            value: "8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moving-proxy
+  labels:
+    app: moving-proxy
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    protocol: TCP
+    name: moving-proxy
+    targetPort: 8000
+    nodePort: 31555
+  selector:
+    app: moving-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moving-proxy
+  labels:
+    app: moving-proxy
+spec:
+  selector:
+    matchLabels:
+      app: moving-proxy
+  template:
+    metadata:
+      labels:
+        app: moving-proxy
+    spec:
+      containers:
+      - name: moving-proxy
+        image: my-proxy:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+          - name: FIBONACCI_HOSTNAME
+            value: "moving-service"
+            # value: "moving-service.default.svc.clusterset.local"
+          - name: FIBONACCI_PORT
+            value: "8000"
+          - name: PORT
+            value: "8000"

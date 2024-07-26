@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-service
+  labels:
+    app: static-service
+    service: static-service
+spec:
+  ports:
+  - port: 8000
+    name: http
+  selector:
+    app: static-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-service
+  labels:
+    account: static-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-service
+  labels:
+    app: static-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-service
+  template:
+    metadata:
+      labels:
+        app: static-service
+    spec:
+      serviceAccountName: static-service
+      containers:
+      - name: fibonacci-go
+        image: fibonacci-go:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moving-service
+  labels:
+    app: moving-service
+    service: moving-service
+spec:
+  ports:
+  - port: 8000
+    name: http
+  selector:
+    app: moving-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: moving-service
+  labels:
+    account: moving-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moving-service
+  labels:
+    app: moving-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moving-service
+  template:
+    metadata:
+      labels:
+        app: moving-service
+    spec:
+      serviceAccountName: moving-service
+      containers:
+      - name: fibonacci-go
+        image: fibonacci-go:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000

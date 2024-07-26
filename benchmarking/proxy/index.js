@@ -11,6 +11,9 @@ const REVIEWS_PORT = process.env.REVIEWS_PORT || '9080';
 const RATINGS_HOSTNAME = process.env.RATINGS_HOSTNAME || 'ratings';
 const RATINGS_PORT = process.env.RATINGS_PORT || '9080';
 
+const FIBONACCI_HOSTNAME = process.env.FIBONACCI_HOSTNAME || 'fibonacci';
+const FIBONACCI_PORT = process.env.FIBONACCI_PORT || '9000';
+
 const app = express();
 
 app.get('/', (req, res) => {
@@ -50,6 +53,32 @@ app.get('/ratings', async (req, res) => {
     try {
         console.log(`Accessing route: http://${RATINGS_HOSTNAME}:${RATINGS_PORT}/ratings/0`);
         const { data } = await axios.get(`http://${RATINGS_HOSTNAME}:${RATINGS_PORT}/ratings/0`);
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+})
+
+app.get('/fibonacci/:number', async (req, res) => {
+    try {
+        console.log(`Accessing route: http://${FIBONACCI_HOSTNAME}:${FIBONACCI_PORT}/fibonacci/${req.params.number}`);
+        const { data } = await axios.get(`http://${FIBONACCI_HOSTNAME}:${FIBONACCI_PORT}/fibonacci/${req.params.number}`);
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Something went wrong'
+        });
+    }
+})
+
+app.get('/fibonacci_cached/:number', async (req, res) => {
+    try {
+        console.log(`Accessing route: http://${FIBONACCI_HOSTNAME}:${FIBONACCI_PORT}/fibonacci_cached/${req.params.number}`);
+        const { data } = await axios.get(`http://${FIBONACCI_HOSTNAME}:${FIBONACCI_PORT}/fibonacci_cached/${req.params.number}`);
         res.json(data);
     } catch (error) {
         console.log(error);

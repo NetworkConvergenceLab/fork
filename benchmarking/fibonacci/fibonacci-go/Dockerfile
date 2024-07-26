@@ -12,6 +12,6 @@ RUN addgroup -S fibonacci-go && adduser -S fibonacci-go -G fibonacci-go
 USER fibonacci-go
 WORKDIR /home/fibonacci-go
 COPY --from=builder /bin/fibonacci-go ./
-ENV PORT 80
-EXPOSE 80
+ENV PORT 8000
+EXPOSE 8000
 ENTRYPOINT ["./fibonacci-go"]
