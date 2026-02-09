@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy1
+  labels:
+    app: proxy1
+spec:
+  type: NodePort
+  ports:
+  - port: 9020
+    protocol: TCP
+    name: proxy1
+    targetPort: 9020
+    nodePort: 31554
+  selector:
+    app: proxy1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy1
+  labels:
+    app: proxy1
+spec:
+  selector:
+    matchLabels:
+      app: proxy1
+  template:
+    metadata:
+      labels:
+        app: proxy1
+    spec:
+      containers:
+      - name: proxy1
+        image: my-proxy:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9080
+        env:
+          - name: DETAILS_HOSTNAME
+            value: "details"
+          - name: DETAILS_PORT
+            value: "9080"
+          - name: RATINGS_HOSTNAME
+            value: "ratings.default.svc.clusterset.local"
+          - name: RATINGS_PORT
+            value: "9080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy2
+  labels:
+    app: proxy2
+spec:
+  type: NodePort
+  ports:
+  - port: 9020
+    protocol: TCP
+    name: proxy2
+    targetPort: 9020
+    nodePort: 31555
+  selector:
+    app: proxy2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy2
+  labels:
+    app: proxy2
+spec:
+  selector:
+    matchLabels:
+      app: proxy2
+  template:
+    metadata:
+      labels:
+        app: proxy2
+    spec:
+      containers:
+      - name: proxy2
+        image: my-proxy:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9080
+        env:
+          - name: REVIEWS_HOSTNAME
+            value: "reviews.default.svc.clusterset.local"
+          - name: REVIEWS_PORT
+            value: "9080"
