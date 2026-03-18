@@ -1,0 +1,31 @@
+# permissions for end users to edit dependencylists.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: dependencylist-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: operator
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+  name: dependencylist-editor-role
+rules:
+- apiGroups:
+  - multicluster.my.domain
+  resources:
+  - dependencylists
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - multicluster.my.domain
+  resources:
+  - dependencylists/status
+  verbs:
+  - get

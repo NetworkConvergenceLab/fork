@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-service
+  labels:
+    app: static-service
+    service: static-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+  selector:
+    app: static-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-service
+  labels:
+    account: static-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-service
+  labels:
+    app: static-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-service
+  template:
+    metadata:
+      labels:
+        app: static-service
+    spec:
+      serviceAccountName: static-service
+      containers:
+      - name: static-fibonacci-go
+        image: 192.168.4.14:443/fork/fibonacci-go:v1
+        #image: 192.168.4.14:443/fork/fibonacci-py:v1
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+        env:
+        - name: PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moving-service
+  labels:
+    app: moving-service
+    service: moving-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+  selector:
+    app: moving-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: moving-service
+  labels:
+    account: moving-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moving-service
+  labels:
+    app: moving-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moving-service
+  template:
+    metadata:
+      labels:
+        app: moving-service
+    spec:
+      serviceAccountName: moving-service
+      containers:
+      - name: moving-fibonacci-go
+        image: 192.168.4.14:443/fork/fibonacci-go:v1
+        #image: 192.168.4.14:443/fork/fibonacci-py:v1
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+        env:
+        - name: PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000

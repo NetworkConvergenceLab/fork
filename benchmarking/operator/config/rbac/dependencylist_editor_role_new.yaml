@@ -1,0 +1,38 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dependencylist-editor-role
+rules:
+# Existing rules
+- apiGroups:
+  - multicluster.my.domain
+  resources:
+  - dependencylists
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - multicluster.my.domain
+  resources:
+  - dependencylists/status
+  verbs:
+  - get
+
+# NEW rule for ServiceExport
+- apiGroups:
+  - multicluster.x-k8s.io
+  resources:
+  - serviceexports
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete

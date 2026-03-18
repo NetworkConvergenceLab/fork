@@ -1,0 +1,24 @@
+apiVersion: multicluster.my.domain/v1beta1
+kind: DependencyList
+metadata:
+  labels:
+    app.kubernetes.io/name: dependencylist
+    app.kubernetes.io/instance: dependencylist-sample
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: operator
+  name: dependencylist-sample
+spec:
+  clusterName: cluster-cherry
+  clusterServiceMap:
+    cluster-almond:
+      - static-service
+      - moving-service
+    cluster-cherry:
+      - static-proxy
+      - moving-proxy
+  dependencies:
+  - dependent: static-proxy
+    dependsOn: static-service
+  - dependent: moving-proxy
+    dependsOn: moving-service

@@ -1,0 +1,26 @@
+apiVersion: multicluster.my.domain/v1beta1
+kind: DependencyList
+metadata:
+  labels:
+    app.kubernetes.io/name: dependencylist
+    app.kubernetes.io/instance: dependencylist-sample
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: operator
+  name: dependencylist-sample
+spec:
+  clusterName: cluster-ash
+  clusterServiceMap:
+    cluster-hazel:
+      - productpage
+    cluster-ash:
+      - details
+      - ratings
+      - reviews
+  dependencies:
+  - dependent: productpage
+    dependsOn: details
+  - dependent: productpage
+    dependsOn: ratings
+  - dependent: productpage
+    dependsOn: reviews
